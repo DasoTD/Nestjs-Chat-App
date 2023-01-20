@@ -1,11 +1,34 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
+import {
+  ServerToClientEvents,
+  ClientToServerEvents,
+  Message,
+} from '../../shared/interfaces/chat.interface';
+import {Server} from 'socket.io';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 
-@WebSocketGateway(80, { namespace: 'event'})
+@WebSocketGateway(80, { namespace: 'event', cors: {
+  origin: '*'
+},
+})
+
 export class ChatGateway {
+  @WebSocketServer() server: Server = new Server<ServerToClientEvents, ClientToServerEvents>();
+  private logger = new Logger('ChatGateway');
   constructor(private readonly chatService: ChatService) {}
+
+  @SubscribeMessage('chat')
+  async handleEvent(
+    @MessageBody()
+    payload: Message,
+  ): Promise<Message> {
+    this.logger.log(payload);
+    this.server.emit('chat', payload); // broadcast messages
+    return payload;
+  }
 
   @SubscribeMessage('createChat')
   create(@MessageBody() createChatDto: CreateChatDto) {
