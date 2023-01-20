@@ -1,6 +1,9 @@
-// import { MessageBody, SubscribeMessage } from "@nestjs/websockets";
+import { MessageBody, SubscribeMessage } from "@nestjs/websockets";
 
-// @SubscribeMessage('events')
-// handleEvent(@MessageBody() data: string): string{
-//     return data;
-// }
+export class ChatEvent {
+@SubscribeMessage('events')
+handleEvent(@MessageBody() data: string): string{
+    return data;
+}
+
+}
