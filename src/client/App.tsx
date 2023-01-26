@@ -70,13 +70,13 @@ function App() {
   return (
     <>
       {user && user.userId ? (
-        <ChatLayout>
+        <ChatLayout children={[]}>
           <Header user={user} isConnected={isConnected}></Header>
           <Messages user={user} messages={messages}></Messages>
           <MessageForm sendMessage={sendMessage}></MessageForm>
         </ChatLayout>
       ) : (
-        <LoginLayout>
+        <LoginLayout children={undefined}>
           <LoginForm login={login}></LoginForm>
         </LoginLayout>
       )}
